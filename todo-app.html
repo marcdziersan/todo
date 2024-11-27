@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            margin-top: 20px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        #todo-container {
+            width: 90%;
+            max-width: 400px;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        #todo-form {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #todo-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+        #add-btn {
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            transition: background-color 0.2s ease;
+        }
+        #add-btn:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            transition: background 0.2s ease;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        li:hover {
+            background: #f9f9f9;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        .delete-btn:hover {
+            color: #c0392b;
+        }
+        footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            padding: 10px 0;
+        }
+        footer span {
+            font-weight: bold;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Meine To-Do-App</h1>
+        <p>Organisiere deinen Tag mühelos!</p>
+    </header>
+    <div id="todo-container">
+        <form id="todo-form">
+            <input type="text" id="todo-input" placeholder="Neue Aufgabe hinzufügen..." required>
+            <button id="add-btn" type="submit">+</button>
+        </form>
+        <ul id="todo-list"></ul>
+    </div>
+    <footer>
+        <p>Bleib produktiv! <span>Du schaffst das!</span></p>
+    </footer>
+    <script>
+        const todoInput = document.getElementById('todo-input');
+        const todoList = document.getElementById('todo-list');
+        const todoForm = document.getElementById('todo-form');
+
+        // Lade gespeicherte Aufgaben aus localStorage
+        function loadTodos() {
+            const todos = JSON.parse(localStorage.getItem('todos')) || [];
+            todos.forEach(todo => addTodoToDOM(todo));
+        }
+
+        // Speicher Aufgaben im localStorage
+        function saveTodos() {
+            const todos = [...todoList.querySelectorAll('li')].map(li => li.firstChild.textContent);
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        // Neue Aufgabe hinzufügen
+        function addTodoToDOM(todoText) {
+            const li = document.createElement('li');
+            li.textContent = todoText;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.classList.add('delete-btn');
+            deleteBtn.addEventListener('click', () => {
+                li.remove();
+                saveTodos();
+            });
+
+            li.appendChild(deleteBtn);
+            todoList.appendChild(li);
+        }
+
+        // Event: Aufgabe hinzufügen
+        todoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (todoInput.value.trim()) {
+                addTodoToDOM(todoInput.value);
+                saveTodos();
+                todoInput.value = '';
+            }
+        });
+
+        // Initialisierung
+        loadTodos();
+    </script>
+</body>
+</html>
